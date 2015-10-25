@@ -10,4 +10,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^home$', main.homepage),
     url(r'^listing/(\d+)$', main.listing_det),
+    url(r'^login$', main.login),
+    url(r'^logout$', main.logout),
+    url(r'^createuser$', main.create_usr),
+    url(r'^createlisting$', main.create_lst),
 )
