@@ -46,21 +46,22 @@ def create_usr(request):
 
 
 def create_lst(request):
-	post_data = {'title': request.POST['title'], 'description': request.POST['description'], 'creator': request.POST['creator'], 'available': request.POST['available'], 'u_id': request.POST['u_id']}
-	kafka = KafkaClient('kafka:9092')
-	producer = SimpleProducer(kafka)
-	some_new_listing = {'title': request.POST['title'], 'description': request.POST['description'], 'creator': request.POST['creator']}
-	producer.send_messages(b'new-listings-topic', json.dumps(some_new_listing).encode('utf-8'))
+	post_data = {'title': request.POST['title'], 'description': request.POST['description'], 'creator': request.POST['creator'], 'available': request.POST['available'], 'u_id': request.POST['u_id']}	
 	post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
 	req = urllib.request.Request('http://models-api:8000/api/v1/listing/create', data=post_encoded, method='POST')
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
+	kafka = KafkaClient('kafka:9092')
+	producer = SimpleProducer(kafka)
+	some_new_listing = {'title': request.POST['title'], 'description': request.POST['description'], 'creator': request.POST['creator'], 'id': resp['resp']['listing_id']}
+	producer.send_messages(b'new-listings-topic', json.dumps(some_new_listing).encode('utf-8'))
 	return JsonResponse(resp)
 
 def search(request):
 	es = Elasticsearch(['es'])
 	searchInput = request.POST['searchinput']
-	es.search(index='listing_index', body={'query': {'query_string': {'query': searchInput}}, 'size': 10})
+	searchRes = es.search(index='listing_index', body={'query': {'query_string': {'query': searchInput}}, 'size': 10})
+	return JsonResponse(searchRes)
 	#resp_json = urllib.request.urlopen(req).read().decode('utf-8')
         #resp = json.loads(resp_json)
         #return JsonResponse(resp)
