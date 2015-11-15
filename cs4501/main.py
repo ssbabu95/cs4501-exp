@@ -3,6 +3,7 @@ import urllib.parse
 import json
 from django.http import JsonResponse, HttpResponse
 from kafka import SimpleProducer, KafkaClient
+from elasticsearch import Elasticsearch
 
 def homepage(request):
 
@@ -55,3 +56,11 @@ def create_lst(request):
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
 	return JsonResponse(resp)
+
+def search(request):
+	es = Elasticsearch(['es'])
+	searchInput = request.POST['searchinput']
+	es.search(index='listing_index', body={'query': {'query_string': {'query': searchInput}}, 'size': 10})
+	#resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+        #resp = json.loads(resp_json)
+        #return JsonResponse(resp)

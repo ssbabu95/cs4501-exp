@@ -14,4 +14,5 @@ urlpatterns = patterns('',
     url(r'^logout$', main.logout),
     url(r'^createuser$', main.create_usr),
     url(r'^createlisting$', main.create_lst),
+    url(r'^search$', main.search),
 )
