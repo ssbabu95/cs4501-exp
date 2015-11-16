@@ -60,7 +60,7 @@ def create_lst(request):
 def search(request):
 	es = Elasticsearch(['es'])
 	searchInput = request.POST['searchinput']
-	searchRes = es.search(index='listing_index', body={'query': {'query_string': {'query': searchInput}}, 'size': 10})
+	searchRes = es.search(index='listing_index', body={'query': {'match': {'full_text': searchInput}}, 'size': 10})
 	return JsonResponse(searchRes)
 	#resp_json = urllib.request.urlopen(req).read().decode('utf-8')
         #resp = json.loads(resp_json)
